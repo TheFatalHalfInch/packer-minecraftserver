@@ -13,7 +13,7 @@ cd ${mcdir}
 
 #Enter loop to launch and verify whether server is running
 while [ $DUMMYVAR = "DUH" ]
-do 
+do
   #Checks to see if java is running
   ps -C java > /dev/null
 
