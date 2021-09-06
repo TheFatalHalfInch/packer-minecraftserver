@@ -18,7 +18,7 @@ This is for a vanilla Minecraft server with no modding or any kind of secondary 
 
 ## Acknowledgements
 
-https://bobcares.com/blog/install-minecraft-server-on-ubuntu/
-https://louwrentius.com/understanding-the-ubuntu-2004-lts-server-autoinstaller.html
-https://aikar.co/2018/07/02/tuning-the-jvm-g1gc-garbage-collector-flags-for-minecraft/
-https://www.spigotmc.org/threads/guide-server-optimization%E2%9A%A1.283181/
+https://bobcares.com/blog/install-minecraft-server-on-ubuntu/  
+https://louwrentius.com/understanding-the-ubuntu-2004-lts-server-autoinstaller.html  
+https://aikar.co/2018/07/02/tuning-the-jvm-g1gc-garbage-collector-flags-for-minecraft/  
+https://www.spigotmc.org/threads/guide-server-optimization%E2%9A%A1.283181/  
