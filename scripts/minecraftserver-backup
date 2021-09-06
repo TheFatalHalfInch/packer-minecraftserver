@@ -1,63 +1,22 @@
 #!/bin/bash
 #Place in cron.daily (or however often you would like to back it up)
 DAY="$(date "+%a")"
-world="7.1.2019_Cool_Village"
-backupdir="/media/data/Game Backup/Servers/Minecraft/ActiveBackup"
-mountdir="/mnt/minecraft"
-remote="//192.168.0.252/minecraftshare"
-runtimes=0
+world="world"
+backupdir="/opt/minecraft/backups"
+mountdir="/opt/minecraft/server"
 
-while [ $loopvar -eq $true ]
-do
-  echo "loop start..."
-  let "runtimes++"
-  #Minecraft server directory is empty or not
-  if [ "$(ls "${mountdir}")" ]; then
-    #If directory is not empty...
-    echo "directory has files"
-    echo "removing files older than a week"
-    #Remove files of type .tgz that are older than a week
-    find "${backupdir}/" -type f -mtime +7 -name '*.tgz' -execdir rm -- '{}' +
-    echo "backup up the minecraft server"
-    #Backup the server to a specified directory
-    tar -zcvf "${backupdir}/${DAY}_${world}.tgz" -C "${mountdir}" "${world}"
-    #if backup fails...
-    if [ $? -ne 0 ]; then
-      echo "tar operation failed"
-      loopvar=$false
-      exit 3
-    fi
-    #Exit the loop/script
-    echo "complete"
-    loopvar=$false
-    exit 0
-  else
-    #If directory is empty...
-    echo "directory is empty"
-    #if 1st run...
-    if [ $runtimes -eq 1 ]; then
-      #mount the directory again
-      #root bash -c 'mount -a'
-      echo "mount command here"
-      sudo mount -t cifs -o guest,uid=1000,iocharset=utf8,ro "${remote}" "${mountdir}"
-      #if mount success...
-      if [ $? -eq 0 ]; then
-        #start the loop again
-        echo "mount succeeded"
-        loopvar=$true
-      #if mount error...
-      else
-        #exit script
-        echo "mount failed"
-        loopvar=$false
-        exit 1
-      fi
-    #if 2nd run of loop...
-    else
-      #exit script
-      echo "exit due to 2nd run"
-      loopvar=$false
-      exit 2
-    fi
-  fi
-done
+echo "removing files older than a week..."
+#Remove files of type .tgz that are older than a week
+find "${backupdir}/" -type f -mtime +7 -name '*.tgz' -execdir rm -- '{}' +
+echo "backing up world ${world}..."
+#Backup the server to a specified directory
+tar -zcvf "${backupdir}/${DAY}_${world}.tgz" -C "${mountdir}" "${world}"
+#if backup fails...
+if [ $? -ne 0 ]; then
+  echo "tar operation failed!"
+  loopvar=$false
+  exit 1
+fi
+#Exit the loop/script
+echo "complete"
+exit 0
