@@ -25,4 +25,5 @@ https://www.spigotmc.org/threads/guide-server-optimization%E2%9A%A1.283181/ (min
 https://travislawrence.co/2016/06/09/creating-vms-with-packer-and-vagrant/  
 https://github.com/boxcutter/ubuntu/blob/master/script/desktop.sh (used the ubuntu.json template to get the sudo script syntax)  
 https://github.com/vmware/open-vm-tools/issues/421 (used for solving issue with NIC not being connected when deploying with terraform)  
-https://kb.vmware.com/s/article/59687 used for solving issue with NIC not being connected when deploying with terraform)  
+https://kb.vmware.com/s/article/59687 (used for solving issue with NIC not being connected when deploying with terraform)  
+https://askubuntu.com/questions/20414/find-and-replace-text-within-a-file-using-commands (sed commands)  
