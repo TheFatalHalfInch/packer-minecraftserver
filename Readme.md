@@ -2,7 +2,7 @@
 # Welcome!
 
 This is a packer template i've been working on for creating a minecraft server on a vSphere instance.  
-This is for a vanilla Minecraft server with no modding or any kind of secondary software used.
+This is for a vanilla Minecraft server with no modding applied.
 
 ## Requirements
 
