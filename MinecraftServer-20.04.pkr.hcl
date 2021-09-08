@@ -45,7 +45,7 @@ variable "memory" {
 
 variable "name" {
   type    = string
-  default = "ubuntu-20.04"
+  default = "MinecraftServer-20.04"
 }
 
 variable "vcenter_cluster" {
