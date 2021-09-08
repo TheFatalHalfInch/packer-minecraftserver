@@ -18,8 +18,9 @@ This is for a vanilla Minecraft server with no modding or any kind of secondary 
 
 ## Acknowledgements
 
-https://bobcares.com/blog/install-minecraft-server-on-ubuntu/  
-https://louwrentius.com/understanding-the-ubuntu-2004-lts-server-autoinstaller.html  
-https://aikar.co/2018/07/02/tuning-the-jvm-g1gc-garbage-collector-flags-for-minecraft/  
-https://www.spigotmc.org/threads/guide-server-optimization%E2%9A%A1.283181/  
+https://bobcares.com/blog/install-minecraft-server-on-ubuntu/ (guide for configuring minecraft server)  
+https://louwrentius.com/understanding-the-ubuntu-2004-lts-server-autoinstaller.html (subiquity installation help)  
+https://aikar.co/2018/07/02/tuning-the-jvm-g1gc-garbage-collector-flags-for-minecraft/ (minecraft server optimizations)  
+https://www.spigotmc.org/threads/guide-server-optimization%E2%9A%A1.283181/ (minecraft server optimizations)  
 https://travislawrence.co/2016/06/09/creating-vms-with-packer-and-vagrant/  
+https://github.com/boxcutter/ubuntu/blob/master/script/desktop.sh (used the ubuntu.json template to get the sudo script syntax)  
