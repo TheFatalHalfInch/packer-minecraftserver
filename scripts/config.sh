@@ -19,6 +19,7 @@ su minecraft
 mkdir -p ~/{backups,tools,server}
 
 #download minecraft server
+#scrape download URL from site for most recent version? https://www.minecraft.net/en-us/download/server
 wget https://launcher.mojang.com/v1/objects/a16d67e5807f57fc4e550299cf20226194497dc2/server.jar -P ~/server
 
 #launch the server to generate files
