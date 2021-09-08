@@ -12,12 +12,9 @@ apt-get -y upgrade
 #install java
 sudo apt-get -y install openjdk-16-jre-headless
 
-#install mrcon
-curl -LJO https://github.com/Tiiffi/mcrcon/releases/download/v0.7.1/mcrcon-0.7.1-linux-x86-64.tar.gz
-
 #create minecraft user
-useradd -r -m -U -d /opt/minecraft -s /bin/bash minecraft -p minecraft
-passwd -d minecraft
+sudo useradd -r -m -U -d /opt/minecraft -s /bin/bash minecraft -p minecraft
+sudo passwd -d minecraft
 su minecraft
 mkdir -p ~/{backups,tools,server}
 
@@ -30,5 +27,8 @@ java -Xmx1024M -Xms1024M -jar server.jar nogui
 sed -i 's/eula=false/eula=true/g' eula.txt
 sed -i 's/enable-rcon=false/enable-rcon=true/g' server.properties
 sed -i 's/rcon.password=/rcon.password=minecraft/g' server.properties
+
+#install mrcon
+curl -LJO https://github.com/Tiiffi/mcrcon/releases/download/v0.7.1/mcrcon-0.7.1-linux-x86-64.tar.gz
 
 #configure minecraft server service
