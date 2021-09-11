@@ -88,7 +88,8 @@ ExecStart=java -Xms1G -Xmx1G -XX:........
 ExecStart=java -Xms5G -Xmx5G -XX:........
 ```  
 
-The -Xms1G and -Xmx1G arguments specify the amount of RAM in GB (1G is 1 GB of RAM)
+The -Xms1G and -Xmx1G arguments specify the amount of RAM in GB (1G is 1 GB of RAM)  
+
 You can specify MB by changing the G to an M (example: -Xms512M is 512 MB of RAM)
 
 ## Acknowledgements
