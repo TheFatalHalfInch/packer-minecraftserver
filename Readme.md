@@ -57,6 +57,7 @@ packer build --var-file="c:\path\to\your\pkrvars.hcl" -var "vsphere_password=you
     - Allow 25565:TCP through firewall
     - Make backup script executable
     - Change ownership of minecraft home directory to minecraft service account
+- Convert the completed server build to a vSphere template for speedy deployments later on
 
 ## Server backup behavior
 
