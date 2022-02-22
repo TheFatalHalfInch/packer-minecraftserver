@@ -174,4 +174,8 @@ build {
     execute_command   = "echo '${var.ssh_password}' | {{ .Vars }} sudo -E -S bash '{{ .Path }}'"
     script = "${path.root}/scripts/config.sh"
   }
+
+  provisioner "ansible" {
+    playbook_file = "${path.root}/scripts/MinecraftServer.yml"
+  }
 }
