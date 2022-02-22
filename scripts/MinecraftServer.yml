@@ -1,0 +1,156 @@
+# Makin a Minecraft server
+- name: 'Minecraft Server Installation and Configuration'
+  hosts: all
+  become: true
+  vars:
+    home_dir: "/opt/minecraft"
+    mcrcon: "mcrcon-0.7.1-linux-x86-64"
+    rcon_pass: "minecraft"
+    service_user: "minecraft"
+    service_pass: "minecraft"
+    service_group: "minecraft"
+    jar_url: "https://launcher.mojang.com/v1/objects/125e5adf40c659fd3bce3e66e67a16bb49ecc1b9/server.jar"
+    mcrcon_url: "https://github.com/Tiiffi/mcrcon/releases/download/v0.7.1/{{ mcrcon }}.tar.gz"
+
+  tasks:
+    # install java
+    - name: 'Install Java'
+      apt:
+        name: 'openjdk-17-jre-headless'
+        state: present
+
+    # create minecraft group (couldn't find out how to do this as part of user setup)
+    - name: "Create minecraft group"
+      group:
+        name: "{{ service_group }}"
+        state: present
+
+    # minecraft user
+    - name: "Create minecraft service account"
+      user:
+        name: '{{ service_user }}'
+        password: '{{ service_pass }}'
+        group: "{{ service_group }}"
+        shell: '/bin/bash'
+        state: present
+        create_home: true
+        home: '{{ home_dir }}'
+
+    # create server directories
+    - name: "Create server directories"
+      file:
+        path: "{{ item }}"
+        state: directory
+      with_items:
+        - "{{ home_dir }}/backups"
+        - "{{ home_dir }}/tools"
+        - "{{ home_dir }}/server"
+
+    # download minecraft server file
+    - name: "Minecraft server jar download"
+      get_url:
+        url: '{{ jar_url }}'
+        dest: "{{ home_dir }}/server/server.jar"
+
+    # run the file
+    - name: "First server run"
+      command:
+        cmd: java -Xmx512M -Xms512M -jar server.jar nogui
+      args:
+        chdir: "{{ home_dir }}/server"
+        creates: "{{ home_dir }}/server/eula.txt"
+
+    # accept the eula agreement
+    - name: "Accept EULA"
+      lineinfile:
+        path: "{{ home_dir }}/server/eula.txt"
+        search_string: 'eula=false'
+        line: 'eula=true'
+        state: present
+
+    # enable RCON on the server
+    - name: "Enable RCON"
+      lineinfile:
+        path: "{{ home_dir }}/server/server.properties"
+        search_string: 'enable-rcon=false'
+        line: 'enable-rcon=true'
+        state: present
+
+    # set the rcon password
+    - name: "Set RCON password"
+      lineinfile:
+        path: "{{ home_dir }}/server/server.properties"
+        search_string: 'rcon.password='
+        line: 'rcon.password={{ rcon_pass }}'
+        state: present
+
+    # download mcrcon
+    - name: "Download MCRCON"
+      get_url:
+        url: '{{ mcrcon_url }}'
+        dest: "{{ home_dir }}/tools/{{ mcrcon }}.tar.gz"
+
+    # unzip mcrcon
+    - name: "Extract MCRCON"
+      unarchive:
+        remote_src: true
+        src: "{{ home_dir }}/tools/{{ mcrcon }}.tar.gz"
+        dest: "{{ home_dir }}/tools"
+
+    # copy binary to tools
+    - name: "Move mcrcon binary"
+      copy:
+        remote_src: true
+        src: "{{ home_dir }}/tools/{{ mcrcon }}/mcrcon"
+        dest: "{{ home_dir }}/tools/mcrcon"
+
+    # mcrcon cleanup
+    - name: "MCRCON folder cleanup"
+      file:
+        path: "{{ home_dir }}/tools/{{ mcrcon }}"
+        state: absent
+
+    # mcrcon tar cleanup
+    - name: "MCRCON tar cleanup"
+      file:
+        path: "{{ home_dir }}/tools/{{ mcrcon }}.tar.gz"
+        state: absent
+
+    # configure the minecraft service
+    - name: "Reload daemon"
+      systemd:
+        daemon_reload: true
+
+    - name: "Enable Minecraft service"
+      service:
+        name: "minecraft"
+        enabled: true
+        state: stopped
+
+    # allow port TCP 25565 on firewall
+    - name: "Allow Minecraft server port"
+      firewalld:
+        port: 25565/tcp
+        permanent: true
+        state: enabled
+
+    # make backup script executable
+    - name: "Setting backup script as executable"
+      file:
+        path: "/etc/cron.daily/minecraftserverbackup"
+        mode: +x
+
+    # set owner of minecraft directory to service account
+    - name: "Set owner of Minecraft directory to service account"
+      file:
+        path: "{{ home_dir }}"
+        state: directory
+        recurse: true
+        owner: "{{ service_user }}"
+        group: "{{ service_group }}"
+
+    # delete the world if it was created at any point
+    - name: "Removing temporary Minecraft world"
+      file:
+        path: "{{ home_dir }}/server/world"
+        state: absent
