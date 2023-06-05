@@ -4,6 +4,9 @@ mchomedir="/opt/minecraft"
 #update open-vm-tools
 apt-get -y install open-vm-tools
 
+#install jq (to automate getting the server.jar download url)
+apt-get -y install jq
+
 #disable cloud-init to allow cloning from vsphere template
 touch /etc/cloud/cloud-init.disabled
 
@@ -17,13 +20,18 @@ apt-get -y install openjdk-16-jre-headless
 useradd -r -m -U -d "${mchomedir}" -s /bin/bash minecraft -p minecraft
 mkdir -p "${mchomedir}/"{backups,tools,server}
 
-#download minecraft server
-#scrape download URL from site for most recent version? https://www.minecraft.net/en-us/download/server
-#i wasn't able to use a ubuntu vm to get the contents of the page properly, but
-#you can use this powershell command from a windows machine to scrape the page for the link
-#(this should also work in powershell core)
-#(Invoke-WebRequest -uri https://www.minecraft.net/en-us/download/server).links | ? href -match "server.jar" | select -expand href
-wget https://launcher.mojang.com/v1/objects/a16d67e5807f57fc4e550299cf20226194497dc2/server.jar -P "${mchomedir}/"server
+#set the url to pull the json manifest file
+URL='https://launchermeta.mojang.com/mc/game/version_manifest.json'
+#store the json manifest file
+MANIFEST=$(curl $URL)
+#get the latest version number from the manifest file
+LATEST=$(echo $MANIFEST | jq .latest.release --raw-output)
+#find the url for the latest version's json file (contiains info for latest release)
+LATESTURL=$(echo $MANIFEST | jq --arg LATEST "$LATEST" '.versions[] | select(.id == $LATEST).url' --raw-output)
+#get the json info from the latest version and store the download link for the jar file
+JAR=$(curl $LATESTURL | jq .downloads.server.url --raw-output)
+#download the server jar file
+wget $JAR -P "${mchomedir}/"server
 
 #launch the server to generate files
 cd "${mchomedir}/server"
